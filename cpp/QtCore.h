@@ -94,7 +94,14 @@ public:
     QString arg(const QString &str) const
     {
         QString ret = *this;
-        ret.replace("%1", str);
+        for (int i=1; i<10; ++i) {
+            char buf[4];
+            snprintf(buf, sizeof(buf), "%%%d", i);
+            int changed;
+            ret.replace(buf, str, &changed);
+            if (changed)
+                break;
+        }
         return ret;
     }
 
@@ -179,22 +186,30 @@ public:
         return substr(size() - count, count);
     }
 
-    QString &replace(char from, char to)
+    QString &replace(char from, char to, int *count = 0)
     {
         size_t idx = 0;
+        if (count)
+            *count = 0;
         while ((idx = find(from, idx)) != npos) {
+            if (count)
+                ++*count;
             operator[](idx) = to;
         }
         return *this;
     }
 
-    QString &replace(const QString &from, const QString &to)
+    QString &replace(const QString &from, const QString &to, int *count = 0)
     {
         size_t last = 0;
         size_t idx = 0;
         std::ostringstream stream;
         bool changes = false;
+        if (count)
+            *count = 0;
         while ((idx = find(from, idx)) != npos) {
+            if (count)
+                ++*count;
             changes = true;
             if (last < idx)
                 stream.write(constData() + last, idx - last);
@@ -202,8 +217,11 @@ public:
             idx += from.size();
             last = idx;
         }
-        if (changes)
+        if (changes) {
+            if (last < size())
+                stream.write(constData() + last, size() - last);
             operator=(stream.str());
+        }
         return *this;
     }
 

@@ -1,27 +1,19 @@
 #include <QtCore>
 #include <diff_match_patch.h>
 
-void foo()
-{
-
-    regex_t regex;
-    int state = regcomp(&regex, ".\\(.\\).", 0);
-    printf("regcomp state %d\n", state);
-    regmatch_t captures[10];
-    state = regexec(&regex, "abc", sizeof(captures) / sizeof(regmatch_t), captures, 0);
-    for (unsigned i=0; i<sizeof(captures) / sizeof(regmatch_t); ++i) {
-        if (captures[i].rm_so != -1) {
-            printf("Got capped %d %lld %lld\n", i, captures[i].rm_so, captures[i].rm_eo);
-        } else {
-            break;
-        }
-    }
-    regfree(&regex);
-
-}
-
 int main(int argc, char **argv)
 {
+//     QString balls = "1";
+//     balls.replace("1", "1234");
+//     printf("%s\n", balls.constData());
+//     balls.replace("23", "aa");
+//     printf("%s\n", balls.constData());
+//     // return 0;
+
+
+
+//     printf("%s\n", QString("%2:%1").arg('0').arg("99").constData());
+//     return 0;
     // foo();
     // return 0;
     QRegExp rx(".\\(.\\).");
