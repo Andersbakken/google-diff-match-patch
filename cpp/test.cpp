@@ -3,10 +3,6 @@
 
 int main(int argc, char **argv)
 {
-    QString foo = "1\n2\3\n";
-    foo.replace('\n', 'a');
-    printf("Foo [%s]\n", foo.constData());
-    return 0;
     QString a, b;
     bool string = false;
     for (int i=1; i<argc; ++i) {
