@@ -14,32 +14,46 @@ typedef unsigned short ushort;
 class QChar
 {
 public:
-    QChar(char val = 0)
-        : value(val)
+    QChar(const char val = 0)
+        : ptr(0), value(val)
+    {}
+
+    QChar(char *p)
+        : ptr(p), value(0)
     {}
 
     operator char() const
     {
-        return static_cast<char>(value);
+        return ptr ? *ptr : value;
     }
 
     ushort unicode() const
     {
-        return value;
+        return ptr ? *ptr : value;
     }
     bool isLetterOrNumber() const
     {
-        return isalnum(value);
+        return isalnum(unicode());
     }
 
     char toAscii() const
     {
-        return value;
+        return unicode();
+    }
+
+    QChar &operator=(char val)
+    {
+        if (ptr) {
+            *ptr = val;
+        } else {
+            value = val;
+        }
+        return *this;
     }
 
     bool isSpace() const
     {
-        return isspace(value);
+        return isspace(toAscii());
     }
 
     enum Category {
@@ -52,6 +66,7 @@ public:
         return NoCategory;
     }
 
+    char *ptr;
     char value;
 };
 
@@ -157,9 +172,14 @@ public:
         return string.size() <= size() && !strncmp(string.constData(), constData(), string.size());
     }
 
-    QChar operator[](int val) const
+    const QChar operator[](int val) const
     {
         return std::string::operator[](val);
+    }
+
+    QChar operator[](int val)
+    {
+        return &std::string::operator[](val);
     }
 
     bool isEmpty() const
@@ -194,7 +214,8 @@ public:
         while ((idx = find(from, idx)) != npos) {
             if (count)
                 ++*count;
-            operator[](idx) = to;
+
+            operator[](idx++) = to;
         }
         return *this;
     }
